@@ -1,0 +1,17 @@
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\bin\Debug\net6.0\Будущий 10.exe
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\bin\Debug\net6.0\Будущий 10.deps.json
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\bin\Debug\net6.0\Будущий 10.runtimeconfig.json
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\bin\Debug\net6.0\Будущий 10.dll
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\bin\Debug\net6.0\Будущий 10.pdb
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\obj\Debug\net6.0\Будущий 10.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\obj\Debug\net6.0\Будущий 10.AssemblyInfoInputs.cache
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\obj\Debug\net6.0\Будущий 10.AssemblyInfo.cs
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\obj\Debug\net6.0\Будущий 10.csproj.CoreCompileInputs.cache
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\obj\Debug\net6.0\Будущий 10.dll
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\obj\Debug\net6.0\refint\Будущий 10.dll
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\obj\Debug\net6.0\Будущий 10.pdb
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\obj\Debug\net6.0\Будущий 10.genruntimeconfig.cache
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\obj\Debug\net6.0\ref\Будущий 10.dll
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\obj\Debug\net6.0\Будущий 10.csproj.AssemblyReference.cache
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\bin\Debug\net6.0\Newtonsoft.Json.dll
+C:\Users\Eliza\source\repos\Будущий 10\Будущий 10\obj\Debug\net6.0\Будущий 10.csproj.CopyComplete

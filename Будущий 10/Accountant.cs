@@ -9,7 +9,7 @@ using static Будущий_10.Administrator;
 
 namespace Будущий_10
 {
-    public class Accountant 
+    public class Accountant
     {
         public static List<Transaction> transactions = new();
         public static string filePath = "Transaction.json";
@@ -48,12 +48,63 @@ namespace Будущий_10
 
             if (pos >= 0)
             {
-                
+
 
             }
             if (pos == -11)
             {
                 Product.Create();
+            }
+            if (Arrows.key.Key == ConsoleKey.F2)
+            {
+                Program.WelcomePrint();
+                Console.WriteLine("Выберите, по какому пункту вы хотите произвести поиск:");
+
+                string[] MenuDd =
+                {
+                    "  ID" , "  Название","  Сумма", "  Дата", "  Прибавка"
+                };
+
+                string column = "";
+                string searchtext = "";
+                foreach (string cmd in MenuDd)
+                {
+                    Console.WriteLine(cmd);
+                }
+                pos = Arrows.Show(MenuDd.Length);
+                int lineCursor = Arrows.startLine + MenuDd.Length + 2;
+                Console.SetCursorPosition(0, lineCursor);
+                if (pos == 0)
+                {
+                    column = "ID";
+                    Console.WriteLine("Введите ID: ");
+
+                }
+                else if (pos == 1)
+                {
+                    column = "Name";
+                    Console.WriteLine("Введите Название: ");
+
+                }
+                else if (pos == 2)
+                {
+                    column = "Amount";
+                    Console.WriteLine("Введите Сумма: ");
+
+                }
+                else if (pos == 3)
+                {
+                    column = "Date";
+                    Console.WriteLine("Введите Дату: ");
+
+                }
+                else if (pos == 4)
+                {
+                    column = "IsIncome";
+                    Console.WriteLine("Введите есть ли Прибавка: ");
+
+                }
+                searchtext = Console.ReadLine();
             }
         }
     }

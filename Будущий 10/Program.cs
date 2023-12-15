@@ -8,12 +8,11 @@ class Program
     static public Administrator.User LoginUser = new();
     public static void Main(string[] args)
     {
-
+        //Console.SetCursorPosition(45, 10);
+        //Console.WriteLine("ДОБРО ПОЖАЛОВАТЬ В МАГАЗИН 'ЯРУССКИЙ'");
+        ////Thread.Sleep(2000);
         while (true)
         {
-            //Console.SetCursorPosition(45, 10);
-            //Console.WriteLine("ДОБРО ПОЖАЛОВАТЬ В МАГАЗИН 'ЯРУССКИЙ'");
-            //Thread.Sleep(2000);
             string[] mainMenu = { "  Введите логин: ", "  Введите пароль: ", "  Авторизоваться" };
             Console.Clear();
             Console.SetCursorPosition(0, 0);
@@ -26,7 +25,6 @@ class Program
             }
 
             int pos = Arrows.Show(mainMenu.Length);
-
             while (pos != 2)
             {
                 int lineCursor = pos + Arrows.startLine;
@@ -122,19 +120,7 @@ class Program
                 {
 
                 }
-
             }
-            
-
-            //{
-
-            //    Authorization.Authenticate();
-            //    Console.WriteLine("Список пользователей:");
-            //    foreach (var user in Administrator.users)
-            //    {
-            //        Console.WriteLine($"ID: {user.ID}, Логин: {user.Login}, Роль: {user.Role}");
-            //    }
-            //}
         }
     }
 

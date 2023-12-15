@@ -77,6 +77,81 @@ namespace Будущий_10
             {
                 Employee.Create();
             }
+            if (Arrows.key.Key == ConsoleKey.F2)
+            {
+                Program.WelcomePrint();
+                Console.WriteLine("Выберите, по какому пункту вы хотите произвести поиск:");
+
+                string[] MenuDd =
+                {
+                    "  ID" , "  Имя","  Фамилия", "  Отчество","  Должность", "  Дата рождения","  Серия/номер пасспорта", "  Зарплата", "  ID пользователя"
+                };
+
+                string column = "";
+                string searchtext = "";
+                foreach (string cmd in MenuDd)
+                {
+                    Console.WriteLine(cmd);
+                }
+                pos = Arrows.Show(MenuDd.Length);
+                int lineCursor = Arrows.startLine + MenuDd.Length + 2;
+                Console.SetCursorPosition(0, lineCursor);
+                if (pos == 0)
+                {
+                    column = "ID";
+                    Console.WriteLine("Введите ID: ");
+
+                }
+                else if (pos == 1)
+                {
+                    column = "LastName";
+                    Console.WriteLine("Введите Фамилию: ");
+
+                }
+                else if (pos == 2)
+                {
+                    column = "FirstName";
+                    Console.WriteLine("Введите Имя: ");
+
+                }
+                else if (pos == 3)
+                {
+                    column = "MiddleName";
+                    Console.WriteLine("Введите Отчество: ");
+
+                }
+                else if (pos == 4)
+                {
+                    column = "Role";
+                    Console.WriteLine("Введите Должность: ");
+
+                }
+                else if (pos == 5)
+                {
+                    column = "DateOfBirth";
+                    Console.WriteLine("Введите Дату рождения: ");
+
+                }
+                else if (pos == 6)
+                {
+                    column = "PassportNumber";
+                    Console.WriteLine("Введите Серию/номер пасспорта: ");
+
+                }
+                else if (pos == 7)
+                {
+                    column = "Salary";
+                    Console.WriteLine("Введите Зарплату: ");
+
+                }
+                else if (pos == 8)
+                {
+                    column = "UserID";
+                    Console.WriteLine("Введите ID пользователя: ");
+                }
+
+                searchtext = Console.ReadLine();
+            }
         }
 
 

@@ -74,11 +74,54 @@ namespace Будущий_10
             {
                 Product.Create();
             }
+            if (Arrows.key.Key == ConsoleKey.F2)
+            {
+                Program.WelcomePrint();
+                Console.WriteLine("Выберите, по какому пункту вы хотите произвести поиск:");
+
+                string[] MenuDd =
+                {
+                    "  ID" , "  Название","  Цена", "  Количество"
+                };
+
+                string column = "";
+                string searchtext = "";
+                foreach (string cmd in MenuDd)
+                {
+                    Console.WriteLine(cmd);
+                }
+                pos = Arrows.Show(MenuDd.Length);
+                int lineCursor = Arrows.startLine + MenuDd.Length + 2;
+                Console.SetCursorPosition(0, lineCursor);
+                if (pos == 0)
+                {
+                    column = "ID";
+                    Console.WriteLine("Введите ID: ");
+
+                }
+                else if (pos == 1)
+                {
+                    column = "Name";
+                    Console.WriteLine("Введите Название: ");
+
+                }
+                else if (pos == 2)
+                {
+                    column = "Price";
+                    Console.WriteLine("Введите Цену: ");
+
+                }
+                else if (pos == 3)
+                {
+                    column = "Quantity";
+                    Console.WriteLine("Введите Количество: ");
+
+                }               
+                searchtext = Console.ReadLine();
+            }
         }
-
-
-
     }
+
 
 
 

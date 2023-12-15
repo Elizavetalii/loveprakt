@@ -46,7 +46,7 @@ namespace Будущий_10
             }
             else if (index == Menu.Length)
             {
-                lineMenu = new string('-', 17);
+                lineMenu = new string('-', 27);
             }
             else
             {

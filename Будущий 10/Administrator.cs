@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Data.Common;
+using System.Data;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 using static Будущий_10.Administrator;
 
 namespace Будущий_10
@@ -69,37 +72,48 @@ namespace Будущий_10
 
                 string column = "";
                 string searchtext = "";
-                Console.WriteLine(MenuAd);
+                foreach (string cmd in MenuAd)
+                {
+                    Console.WriteLine(cmd);
+                }
                 pos = Arrows.Show(MenuAd.Length);
                 int lineCursor = Arrows.startLine + MenuAd.Length + 2;
                 Console.SetCursorPosition(0, lineCursor);
-                if (pos == 2)
+                string errorText = "";
+                if (pos == 0)
                 {
                     column = "ID";
-                    Console.WriteLine("Введите ID: ");                   
-                    
+                    Console.WriteLine("Введите ID: ");
+                    errorText = "Такого ID не существует";
                 }
-                else if (pos == 3)
+                else if (pos == 1)
                 {
                     column = "Login";
                     Console.WriteLine("Введите Логин: ");
+                    errorText = "Такого Логина не существует";
 
                 }
-                else if (pos == 4)
+                else if (pos == 2)
                 {
                     column = "Password";
                     Console.WriteLine("Введите Пароль: ");
+                    errorText = "Такого Пароля не существует";
 
                 }
-                else if (pos == 5)
+                else if (pos == 3)
                 {
                     column = "Role";
                     Console.WriteLine("Введите Роль: ");
-
+                    errorText = "Такой Роли не существует";
                 }
                 searchtext = Console.ReadLine();
-            }
-
+                var FindEmployee = General.Search(HR_manager.employees, column, searchtext);
+                if (FindEmployee == null)
+                {
+                    Console.WriteLine(errorText);
+                    Thread.Sleep(500);
+                }
+            }         
         }
 
 
@@ -321,6 +335,11 @@ namespace Будущий_10
                 {
                     return 1;
                 }
+            }
+
+            public void Save()
+            {
+
             }
 
             void IDataRepository<User>.Create(User item)
