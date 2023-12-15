@@ -1,0 +1,162 @@
+﻿using System;
+using System.Data;
+using Будущий_10;
+
+
+class Program
+{
+    static public Administrator.User LoginUser = new();
+    public static void Main(string[] args)
+    {
+
+        while (true)
+        {
+            //Console.SetCursorPosition(45, 10);
+            //Console.WriteLine("ДОБРО ПОЖАЛОВАТЬ В МАГАЗИН 'ЯРУССКИЙ'");
+            //Thread.Sleep(2000);
+            string[] mainMenu = { "  Введите логин: ", "  Введите пароль: ", "  Авторизоваться" };
+            Console.Clear();
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine("{0,65}", "Параметры авторизации");
+            Console.WriteLine(new string('-', Console.WindowWidth));
+            Console.SetCursorPosition(0, Arrows.startLine);
+            foreach (string cmd in mainMenu)
+            {
+                Console.WriteLine(cmd);
+            }
+
+            int pos = Arrows.Show(mainMenu.Length);
+
+            while (pos != 2)
+            {
+                int lineCursor = pos + Arrows.startLine;
+                if (pos == 0)
+                {
+                    Console.SetCursorPosition(mainMenu[pos].Length, lineCursor);
+                    LoginUser.Login = Console.ReadLine();
+                    
+                }
+                if (pos == 1)
+                {
+                    Console.SetCursorPosition(mainMenu[pos].Length, lineCursor);
+                    
+                    int i = mainMenu[pos].Length;
+                    ConsoleKeyInfo key = Console.ReadKey(true);
+                    while (key.Key != ConsoleKey.Enter)
+                    {
+                        if (key.Key != ConsoleKey.Backspace)
+                        {
+                            LoginUser.Password += key.KeyChar;
+                            Console.Write("*");
+                            i++;
+                            Console.SetCursorPosition(i, lineCursor);
+                        }
+                        else 
+                        {
+                            if (i > mainMenu[pos].Length)
+                            {
+
+                                Console.Write("\b ");
+                                if (LoginUser.Password.Length > 0)
+                                {
+                                    LoginUser.Password = LoginUser.Password.Remove(LoginUser.Password.Length - 1);
+                                }
+
+                                i--;
+                                Console.SetCursorPosition(i, lineCursor);
+
+                            }
+                         
+                        }
+                        key = Console.ReadKey(true);
+
+                    };                   
+                }
+                pos = Arrows.Show(mainMenu.Length);
+
+            }
+            while (pos == 2)
+            {
+                // Найдём пользователя в списке пользователей
+                var FindUser = General.Search(Administrator.users, "Login", LoginUser.Login);
+                if (FindUser != null && FindUser.Login == "")
+                {
+                    Console.SetCursorPosition(10, 10);
+                    Console.WriteLine("Пользователь с таким логином не найден!");
+                    Thread.Sleep(500);
+                    break;
+                }
+                else if(FindUser?.Password != LoginUser.Password)
+                {
+                    Console.SetCursorPosition(10, 10);
+                    Console.WriteLine("Введен неверный пароль!");
+                    Thread.Sleep(500);
+                    break;
+                }
+                LoginUser = FindUser;
+
+                // Найдём пользователя в списке сотрудников
+                var FindEmployee = General.Search(HR_manager.employees, "UserID", LoginUser.ID.ToString());
+                if (FindEmployee != null && FindEmployee.UserID == LoginUser.ID)
+                {
+                    LoginUser.Login = FindEmployee.FirstName;
+                }
+
+                if (LoginUser.Role == Roles.Administrator)
+                {
+                    Administrator.Administratoring();                               
+                }
+                if (LoginUser.Role == Roles.HR_manager)
+                {
+                    HR_manager.HR_managering();
+                }
+                if (LoginUser.Role == Roles.Accountant)
+                {
+
+                }
+                if (LoginUser.Role == Roles.WarehouseManager)
+                {
+
+                }
+                if (LoginUser.Role == Roles.Cashier)
+                {
+
+                }
+
+            }
+            
+
+            //{
+
+            //    Authorization.Authenticate();
+            //    Console.WriteLine("Список пользователей:");
+            //    foreach (var user in Administrator.users)
+            //    {
+            //        Console.WriteLine($"ID: {user.ID}, Логин: {user.Login}, Роль: {user.Role}");
+            //    }
+            //}
+        }
+    }
+
+    public static void WelcomePrint()
+    {
+        Console.Clear();
+        Console.SetCursorPosition(0, 0);
+        Console.WriteLine("{0,50}{1,30}", $"Добро пожаловать, {LoginUser.Login}", $"Роль: {LoginUser.Role}");
+        Console.WriteLine(new string('-', Console.WindowWidth));
+        Console.SetCursorPosition(0, Arrows.startLine - 1);
+    }
+    public class Authorization
+    {
+        public string Login { get; set; }
+        public string Password { get; set; }
+
+        public Authorization()
+        {
+            Login = "";
+            Password = "";
+        }
+
+        
+    }
+}
