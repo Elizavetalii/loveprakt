@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Будущий_10
+﻿namespace Будущий_10
 {
     public class Visual
     {
-       public static string[] MenuA =
-       {
+        public static string[] MenuA =
+        {
             " 0 - Админ " ,
-            " 1 - Кассир ",
-            " 2 - Кадровик ",          
-            " 3 - Склад-менеджер " ,
-            " 4 - Бухгалтер",
+            " 1 - Кадровик",
+            " 2 - Бухгалтер",          
+            " 3 - Склад-менеджер ",
+            " 4 - Кассир",
             "",
             " S - Cохранить изменения",
             " Escape - Вернуться в меню"
-       };
+        };
 
         public static string[] MenuB =
         {
@@ -32,10 +26,18 @@ namespace Будущий_10
             "F1 - Добавить запись",
             "F2 - Найти запись",
         };
+
         public static string[] MenuAd =
         {
             "  ID" ,"  Логин", "  Пароль", "  Роль"
         };
+
+        public static string[] MenuC =
+        {
+            "S - Завершить покупку",
+            "Escape - Вернуться в меню",
+        };
+
         static string lineMenu = "";
         public static string getlineMenu(string[] Menu, int index)
         {

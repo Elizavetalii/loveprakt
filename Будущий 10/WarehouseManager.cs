@@ -1,37 +1,211 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Будущий_10;
-using static Будущий_10.Administrator;
+﻿using System.Text;
+
 
 namespace Будущий_10
 {
-    public class WarehouseManager
+    public class WarehouseManager : ICRUD
     {
         public static List<Product> products = new();
         public static string filePath = "Product.json";
-
-        public static void WarehouseManagering()
+        public static int objectPos;
+        static Product objectFromPos;
+        public WarehouseManager()
         {
+            List<Product> newproducts = General.MyDeserialize<Product>(filePath);
+            if (newproducts != null && newproducts.Count > 0)
+            {
+                products = newproducts;
+            }
+            PrintList();
 
-            products = General.MyDeserialize<Product>("products.json") ?? new List<Product>();
+            int pos = Arrows.Show(products.Count);
 
-            ConsoleKeyInfo key = Console.ReadKey(true);
+            if (pos == (int)Keys.F1)
+            {
+                Create();
+            }
+            else if (pos > -1)
+            {
+                Read(pos);
+
+                ConsoleKeyInfo key = Console.ReadKey(true);
+
+                while (true)
+                {
+                    if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.F10 || key.Key == ConsoleKey.Delete)
+                    {
+                        break;
+                    }
+                };
+
+                if (key.Key == ConsoleKey.F10)
+                {
+                    Update();
+
+                }
+                else if (key.Key == ConsoleKey.Delete)
+                {
+                    Delete();
+                }
+                var WarehManager = new WarehouseManager();
+
+            }
+            else if (pos == (int)Keys.F2)
+            {
+                Find();
+                var WarehManager = new WarehouseManager();
+            }
+            else if (pos == (int)Keys.Escape)
+            {
+                return;
+            }
+        }
+        public void Create()
+        {
+            objectFromPos = new();
+
+            if (Edit() == (int)Keys.S)
+            {
+                products.Add(objectFromPos);
+                General.MySerialize(products, filePath);
+            }
+            var WarehManager = new WarehouseManager();
+        }
+        public void Read(int pos)
+        {
+            objectPos = pos;
+            objectFromPos = products[pos];
+            var MenuProduct = PrintObject(Visual.MenuB);
+        }
+        public void Update()
+        {
+            if (Edit() == (int)Keys.S)
+            {
+                products[objectPos].ID = objectFromPos.ID;
+                products[objectPos].Name = objectFromPos.Name;
+                products[objectPos].Price = objectFromPos.Price;
+                products[objectPos].Quantity = objectFromPos.Quantity;
+                General.MySerialize(products, filePath);
+            }
+        }
+        public void Delete()
+        {
+            products.Remove(objectFromPos);
+            General.MySerialize(products, filePath);
+            var WarehManager = new WarehouseManager();
+        }
+        public void ClearEditString(string[] NullMenuProduct, int pos, int lineCursor)
+        {
+            Console.SetCursorPosition(NullMenuProduct[pos].Length, lineCursor + pos);
+            Console.WriteLine(" ", 20);
+            Console.SetCursorPosition(NullMenuProduct[pos].Length, lineCursor + pos);
+        }
+        public string[] PrintObject(string[] VisualMenu)
+        {
+            var MenuProduct = objectFromPos.ToString();
+
+            Program.WelcomePrint();
+            Console.WriteLine("");
+            for (int i = 0; i < MenuProduct.Length; i++)
+            {
+                Console.WriteLine("{0,-60}{1,-10}", MenuProduct[i], "|" + Visual.getlineMenu(VisualMenu, i));
+            }
+
+            for (int i = MenuProduct.Length; i <= VisualMenu.Length; i++)
+            {
+                Console.WriteLine("{0,-60}{1,-10}", "", "|" + Visual.getlineMenu(VisualMenu, i));
+            }
+
+            return MenuProduct;
+        }
+        public int Edit()
+        {
+            var MenuProduct = PrintObject(Visual.MenuA);
+            var NullMenuProduct = new Product().ToString();
+
+            int pos = Arrows.Show(MenuProduct.Length);
+            int lineCursor = pos + Arrows.startLine;
+            while (true)
+            {
+                if (pos == (int)Keys.Escape || pos == (int)Keys.S)
+                { 
+                    return pos;
+                }
+                else if (pos == 0)
+                {
+
+                    ClearEditString(NullMenuProduct, pos, lineCursor);
+
+                    string inputID = Console.ReadLine();
+                    try
+                    {
+                        objectFromPos.ID = int.Parse(inputID);
+                    }
+                    catch
+                    {
+                        Console.SetCursorPosition(10, 10);
+                        Console.WriteLine("Для ID необходимо вводить только цифры!");
+
+                        Console.SetCursorPosition(0, lineCursor + pos);
+                        Console.WriteLine(NullMenuProduct[pos] + new StringBuilder().Insert(0, " ", inputID.Length).ToString());
+                    }
+                }
+                else if (pos == 1)
+                {
+                    ClearEditString(NullMenuProduct, pos, lineCursor);
+                    objectFromPos.Name = Console.ReadLine();
+                }
+                
+                else if (pos == 2)
+                {
+                    ClearEditString(NullMenuProduct, pos, lineCursor);
+                    string inputPrice = Console.ReadLine();
+                    try
+                    {
+                        objectFromPos.Price = int.Parse(inputPrice);
+                    }
+                    catch
+                    {
+                        Console.SetCursorPosition(10, 10);
+                        Console.WriteLine("Для Цены необходимо вводить только цифры!");
+
+                        Console.SetCursorPosition(0, lineCursor + pos);
+                        Console.WriteLine(NullMenuProduct[pos] + new StringBuilder().Insert(0, " ", inputPrice.Length).ToString());
+                    }
+  
+                }
+                else if (pos == 3)
+                {
+                    ClearEditString(NullMenuProduct, pos, lineCursor);
+                    string inputQuantity = Console.ReadLine();
+                    try
+                    {
+                        objectFromPos.Quantity = int.Parse(inputQuantity);
+                    }
+                    catch
+                    {
+                        Console.SetCursorPosition(10, 10);
+                        Console.WriteLine("Для Колличества необходимо вводить только цифры!");
+
+                        Console.SetCursorPosition(0, lineCursor + pos);
+                        Console.WriteLine(NullMenuProduct[pos] + new StringBuilder().Insert(0, " ", inputQuantity.Length).ToString());
+                    }
+                }
+                pos = Arrows.Show(MenuProduct.Length);
+            }
+        }
+        public void PrintList()
+        {
             int indexTable = 0;
             Program.WelcomePrint();
 
             //Заголовок таблицы
-            Console.WriteLine(
-                "{0,-7} {1,-10} {2,-15} {3,-40} {4,-20}",
+            Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20}",
                     "  ID",
                     "Название",
                     "Цена",
                     "Количество",
-                    "|" + Visual.getlineMenu(Visual.MenuF, indexTable)
-            );
+                    "|" + Visual.getlineMenu(Visual.MenuF, indexTable));
             indexTable++;
 
             foreach (Product rowproduct in products)
@@ -41,303 +215,146 @@ namespace Будущий_10
                     rowproduct.Name,
                     rowproduct.Price,
                     rowproduct.Quantity,
-                    "|" + Visual.getlineMenu(Visual.MenuF, indexTable)
-                    );
-            }
-            int pos = Arrows.Show(users.Count);
+                    "|" + Visual.getlineMenu(Visual.MenuF, indexTable));
+                indexTable++;
 
-            while (pos >= 0)
+            }
+            for (int i = indexTable; i <= Visual.MenuF.Length; i++)
             {
-                Console.Clear();
-                Program.WelcomePrint();
-
-                int indexObject = 0;
-                Product currentProduct = products[pos];
-                var MenuNewProduct = currentProduct.ToString();
-                foreach (string item in MenuNewProduct)
-                {
-                    //Console.WriteLine(item);
-                    Console.WriteLine("{0,-60}{1,-10}", item, "|" + Visual.getlineMenu(Visual.MenuA, indexObject));
-                    indexObject++;
-
-                }
-                return;
-
-                if (key.Key == ConsoleKey.Delete)
-                {
-
-                    var usertodelet = users;
-
-
-
-                }
-
+                Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20}",
+                    "",
+                    "",
+                    "",
+                    "", 
+                    "|" + Visual.getlineMenu(Visual.MenuF, i));
             }
-            if (pos == -11)
-            {
-                Product.Create();
-            }
-            if (Arrows.key.Key == ConsoleKey.F2)
+
+        }
+
+        public static string[] ProductMenu()
+        {
+            string[] MenuProduct = {"  ID" , "  Название","  Цена", "  Количество"};
+            return MenuProduct;
+        }
+
+        public void Find()
+        {
+            while (true)
             {
                 Program.WelcomePrint();
                 Console.WriteLine("Выберите, по какому пункту вы хотите произвести поиск:");
 
-                string[] MenuDd =
-                {
-                    "  ID" , "  Название","  Цена", "  Количество"
-                };
-
+                string[] MenuAd = ProductMenu();
                 string column = "";
                 string searchtext = "";
-                foreach (string cmd in MenuDd)
+                foreach (string cmd in MenuAd)
                 {
                     Console.WriteLine(cmd);
                 }
-                pos = Arrows.Show(MenuDd.Length);
-                int lineCursor = Arrows.startLine + MenuDd.Length + 2;
+                int pos = Arrows.Show(MenuAd.Length);
+                int lineCursor = Arrows.startLine + MenuAd.Length + 2;
                 Console.SetCursorPosition(0, lineCursor);
+                string errorText = "";
                 if (pos == 0)
                 {
                     column = "ID";
                     Console.WriteLine("Введите ID: ");
+                    errorText = "Такого ID не существует";
 
                 }
                 else if (pos == 1)
                 {
                     column = "Name";
                     Console.WriteLine("Введите Название: ");
+                    errorText = "Такого Названия не существует";
 
                 }
                 else if (pos == 2)
                 {
                     column = "Price";
                     Console.WriteLine("Введите Цену: ");
+                    errorText = "Такой Цены не существует";
 
                 }
                 else if (pos == 3)
                 {
                     column = "Quantity";
                     Console.WriteLine("Введите Количество: ");
+                    errorText = "Такого Количества не существует";
 
-                }               
+                }
                 searchtext = Console.ReadLine();
-            }
-        }
-    }
-
-
-
-
-
-
-    public class Product
-    {
-        public List<Product> products;
-        public int ID { get; set; }
-        public string Name { get; set; }
-        public double Price { get; set; }
-        public int Quantity { get; set; }
-
-        public Product(int id = 999, string name = "", double price = 0.0, int quantity = 0)
-        {
-            ID = id;
-            Name = name;
-            Price = price;
-            Quantity = quantity;
-        }
-        public string[] ToString()
-        {
-            string idline = "  ID: ";
-            if (ID != 999)
-            {
-                idline += ID;
-            }
-            string nameline = $"  Название: {Name}";
-            string priceline = "  Цена: ";
-            if (Price != 0.0)
-            {
-                priceline += Price;
-            }
-            string quantityline = "  Количество: ";
-            if (Quantity != 0)
-            {
-                quantityline += Quantity;
-            }
-
-
-            string[] result = { idline, nameline, priceline, quantityline };
-            return result;
-        }
-
-        public Product Read(int id)
-        {
-            return products.Find(u => u.ID == id);
-        }
-
-        public void Deserialize()
-        {
-            
-        }
-
-        public void ShowAllProducts()
-        {
-            Console.WriteLine("Список товаров на складе:");
-            foreach (var product in products)
-            {
-                Console.WriteLine($"ID: {product.ID}, Название: {product.Name}, Цена: {product.Price}, Количество: {product.Quantity}");
-            }
-            Console.WriteLine();
-        }
-
-        public static void Create()
-        {
-            ConsoleKeyInfo key = Console.ReadKey(true);
-            Program.WelcomePrint();
-
-            //Печать меню объекта и меню операций над ним
-            int indexObject = 0;
-            Product NEWProduct = new();
-            var MenuNewProduct = NEWProduct.ToString();
-            Console.WriteLine("");
-            foreach (string item in MenuNewProduct)
-            {
-                Console.WriteLine("{0,-60}{1,-10}", item, "|" + Visual.getlineMenu(Visual.MenuA, indexObject));
-                indexObject++;
-            }
-            int pos = Arrows.Show(MenuNewProduct.Length);
-            int lineCursor = pos + Arrows.startLine;
-            while (pos != -15 || pos != Arrows.startLine - 1)
-            {
-                if (pos == 0)
+                List<Product> FindProduct = General.SearchList(products, column, searchtext);
+                if (FindProduct.Count == 0)
                 {
-                    Console.SetCursorPosition(MenuNewProduct[pos].Length, lineCursor);
-                    string inputID = Console.ReadLine();
-                    try
-                    {
-                        NEWProduct.ID = int.Parse(inputID);
-                    }
-                    catch
-                    {
-                        Console.SetCursorPosition(2, lineCursor);
-                        Console.WriteLine(MenuNewProduct[pos] + new StringBuilder().Insert(0, " ", inputID.Length).ToString());
-
-                        Console.SetCursorPosition(10, 10);
-                        Console.WriteLine("Для ID необходимо вводить только цифры!");
-                    }
+                    Console.WriteLine(errorText);
+                    Thread.Sleep(500);
                 }
-                else if (pos == 1)
+                else
                 {
-                    Console.SetCursorPosition(MenuNewProduct[pos].Length, lineCursor);
-                    string inputName = Console.ReadLine();
-                    NEWProduct.Name = inputName;
-                    int i = 11;
-                    key = Console.ReadKey(true);
-                    while (key.Key != ConsoleKey.Enter)
-                    {
-                        if (key.Key == ConsoleKey.Backspace)
-                        {
-                            if (i > 11)
-                            {
-                                Console.Write("\b ");
-                                i--;
-                                Console.SetCursorPosition(i, 3);
-                            }
-                        }
-                        key = Console.ReadKey(true);
+                    Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20}",
+                    "  ID",
+                    "Название",
+                    "Цена",
+                    "Количество");
 
+
+                    foreach (Product rowproduct in products)
+                    {
+                        Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20}",
+                        "  " + rowproduct.ID.ToString(),
+                        rowproduct.Name,
+                        rowproduct.Price,
+                        rowproduct.Quantity);
                     }
+                    ConsoleKeyInfo key = Console.ReadKey(true);
+                }
+                break;
+            }
+        }
+
+        public class Product
+        {
+            public List<Product> products;
+            public int ID { get; set; }
+            public string Name { get; set; }
+            public double Price { get; set; }
+            public int Quantity { get; set; }
+
+            public Product(int id = 999, string name = "", double price = 0.0, int quantity = 0)
+            {
+                ID = id;
+                Name = name;
+                Price = price;
+                Quantity = quantity;
+            }
+            public string[] ToString()
+            {
+                var strProductMenu = ProductMenu();
+                string idline = "";
+                if (ID != 999)
+                {
+                    idline += ID;
+                }
+                string priceline = "";
+                if (Price != 0.0)
+                {
+                    priceline += Price;
+                }
+                string quantityline = "";
+                if (Quantity != 0)
+                {
+                    quantityline += Quantity;
                 }
 
-                else if (pos == 2)
-                {
-                    Console.SetCursorPosition(MenuNewProduct[pos].Length, lineCursor);
-                    double inputPrice = Convert.ToInt32(Console.ReadLine());
-                    NEWProduct.Price = inputPrice;
-
-                }
-                else if (pos == 3)
-                {
-                    Console.SetCursorPosition(MenuNewProduct[pos].Length, lineCursor);
-                    int inputQuantity = Convert.ToInt32(Console.ReadLine());
-                    try
-                    {
-
-                        NEWProduct.Quantity = inputQuantity;
-                    }
-                    catch
-                    {
-                        Console.SetCursorPosition(2, lineCursor);
-                        Console.WriteLine(MenuNewProduct[pos] + new StringBuilder().Insert(0, " ", inputQuantity.ToString().Length).ToString());
-
-                        Console.SetCursorPosition(10, 10);
-                        Console.WriteLine("Для количестве необходимо вводить только цифры!");
-                    }
-                }
+                strProductMenu[0] = $"{strProductMenu[0]}: {idline}";
+                strProductMenu[1] = $"{strProductMenu[1]}: {Name}";
+                strProductMenu[2] = $"{strProductMenu[2]}: {priceline}";
+                strProductMenu[3] = $"{strProductMenu[3]}: {quantityline}";
+               
+                return strProductMenu;
             }
-            Console.SetCursorPosition(MenuNewProduct[pos].Length, lineCursor);
 
-        }
-
-
-        public void Update()
-        {
-            Console.WriteLine("Введите название товара, который хотите изменить:");
-            string productName = Console.ReadLine();
-            Product product = products.Find(p => p.Name == productName);
-
-            if (product != null)
-            {
-                Console.WriteLine("Введите новую информацию о товаре:");
-                Console.Write("ID: ");
-                int ID = int.Parse(Console.ReadLine());
-                Console.Write("Название: ");
-                string name = Console.ReadLine();
-                Console.Write("Цена: ");
-                double price = double.Parse(Console.ReadLine());
-                Console.Write("Количество: ");
-                int quantity = int.Parse(Console.ReadLine());
-                product.ID = ID;
-                product.Name = name;
-                product.Price = price;
-                product.Quantity = quantity;
-
-                Console.WriteLine("Информация о товаре успешно обновлена.");
-            }
-            else
-            {
-                Console.WriteLine("Товар с таким названием не найден на складе.");
-            }
-            Console.WriteLine();
-        }
-
-
-        public void Delete()
-        {
-            Console.WriteLine("Введите название товара, который хотите удалить:");
-            string productName = Console.ReadLine();
-            Product product = products.Find(p => p.Name == productName);
-
-            if (product != null)
-            {
-                products.Remove(product);
-                Console.WriteLine("Товар успешно удален со склада.");
-            }
-            else
-            {
-                Console.WriteLine("Товар с таким названием не найден на складе.");
-            }
-            Console.WriteLine();
-        }
-        public List<Product> GetAll()
-        {
-            return products;
-        }
-
-        public void SaveChanges()
-        {
-            General.MySerialize(products, "products.json");
-            Console.WriteLine("Изменения сохранены.");
-            Console.WriteLine();
         }
     }
 }

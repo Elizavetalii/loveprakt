@@ -1,6 +1,4 @@
-﻿using System;
-using System.Data;
-using Будущий_10;
+﻿using Будущий_10;
 
 
 class Program
@@ -106,19 +104,19 @@ class Program
                 }
                 else if (LoginUser.Role == Roles.HR_manager)
                 {
-                    HR_manager.HR_managering();
+                    var Employees = new HR_manager();
                 }
                 else if(LoginUser.Role == Roles.Accountant)
                 {
-
+                    var Account = new Accountant();
                 }
                 else if(LoginUser.Role == Roles.WarehouseManager)
                 {
-
+                    var WarehManager = new WarehouseManager();
                 }
                 else if(LoginUser.Role == Roles.Cashier)
                 {
-                     
+                    var Cashier = new Cashier();
                 }
                 LoginUser = new();
                 break;
@@ -143,8 +141,6 @@ class Program
         {
             Login = "";
             Password = "";
-        }
-
-        
+        }       
     }
 }

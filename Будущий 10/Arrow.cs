@@ -1,5 +1,4 @@
-﻿using System;
-namespace Будущий_10
+﻿namespace Будущий_10
 {
     internal static class Arrows
     {
@@ -54,7 +53,6 @@ namespace Будущий_10
                     return (int)Keys.F10;
                 else if (key.Key == ConsoleKey.S)
                     return (int)Keys.S;
-
             }
             return position - minPosition;
         }

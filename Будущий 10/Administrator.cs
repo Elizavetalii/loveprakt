@@ -1,20 +1,14 @@
-﻿using System;
-using System.Data.Common;
-using System.Data;
-using System.Text;
-using System.Linq;
+﻿using System.Text;
 
 namespace Будущий_10
 {
 
     public class Administrator : ICRUD
     {
-
         public static List<User> users = new() {new User(0, "1", "1", 0)};
         public static string filePath = "Users.json";
         public static int objectPos;
-        static User objectFromPos;
-        
+        static User objectFromPos;       
         public Administrator()
         {
             List<User> newusers = General.MyDeserialize<User>(filePath);
@@ -67,37 +61,7 @@ namespace Будущий_10
                 return;
             }
         }
-
-        public void PrintList()
-        {
-            int indexTable = 0;
-
-            Program.WelcomePrint();
-
-            //Заголовок таблицы
-            Console.WriteLine(
-                "{0,-7} {1,-10} {2,-15} {3,-45} {4,-20}",
-                    "  ID",
-                    "Логин",
-                    "Пароль",
-                    "Роль",
-                    "|" + Visual.getlineMenu(Visual.MenuF, indexTable)
-                    );
-            indexTable++;
-
-            //Строчки таблицы
-            foreach (User rowuser in users)
-            {
-                Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-45} {4,-20}",
-                    "  " + rowuser.ID.ToString(),
-                    rowuser.Login,
-                    rowuser.Password,
-                    rowuser.Role,
-                    "|" + Visual.getlineMenu(Visual.MenuF, indexTable)
-                    );
-                indexTable++;
-            }
-        }
+   
         public void Create()
         {
             objectFromPos = new();
@@ -114,7 +78,6 @@ namespace Будущий_10
         {
             objectPos = pos;
             objectFromPos = users[pos];
-
             var MenuUser = PrintObject(Visual.MenuB);
         }
 
@@ -192,23 +155,20 @@ namespace Будущий_10
                 }
                 else
                 {
-                    Console.WriteLine(
-                    "{0,-7} {1,-10} {2,-15} {3,-45}",
+                    Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-45}",
                     "  ID",
                     "Логин",
                     "Пароль",
                     "Роль");
                     foreach (var user in FindUser)
                     {
-                        Console.WriteLine(
-                        "{0,-7} {1,-10} {2,-15} {3,-45}",
+                        Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-45}",
                         user.ID,
                         user.Login,
                         user.Password,
                         user.Role);
                     }
                     ConsoleKeyInfo key = Console.ReadKey(true);
-
                 }
                 break;
             }
@@ -223,7 +183,6 @@ namespace Будущий_10
             int lineCursor = pos + Arrows.startLine;
             while (true)
             {
- 
                 if (pos == (int)Keys.Escape || pos == (int)Keys.S)
                 { 
                     return pos;
@@ -281,14 +240,39 @@ namespace Будущий_10
             }
 
         }
-
         public void ClearEditString(string[] NullMenuUser, int pos, int lineCursor)
         {
             Console.SetCursorPosition(NullMenuUser[pos].Length, lineCursor + pos);
             Console.WriteLine(" ", 20);
             Console.SetCursorPosition(NullMenuUser[pos].Length, lineCursor + pos);
         }
+        public void PrintList()
+        {
+            int indexTable = 0;
 
+            Program.WelcomePrint();
+
+            //Заголовок таблицы
+            Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-45} {4,-20}",
+            "  ID",
+            "Логин",
+            "Пароль",
+            "Роль",
+            "|" + Visual.getlineMenu(Visual.MenuF, indexTable));
+            indexTable++;
+
+            //Строчки таблицы
+            foreach (User rowuser in users)
+            {
+                Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-45} {4,-20}",
+                    "  " + rowuser.ID.ToString(),
+                    rowuser.Login,
+                    rowuser.Password,
+                    rowuser.Role,
+                    "|" + Visual.getlineMenu(Visual.MenuF, indexTable));
+                indexTable++;
+            }
+        }
         public string[] PrintObject(string[] VisualMenu)
         {
             var MenuUser = objectFromPos.ToString();
@@ -314,11 +298,8 @@ namespace Будущий_10
             return MenuUser;
         }
 
-
         public class User
         {
-            private List<User> users;
-
             public int ID { get; set; }
             public string Login { get; set; }
             public string Password { get; set; }
@@ -353,7 +334,6 @@ namespace Будущий_10
 
                 return strUserMenu;
             }
-
         }
     }
 }

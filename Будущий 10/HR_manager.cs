@@ -1,100 +1,122 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Будущий_10.Administrator;
+﻿using System.Text;
 
 namespace Будущий_10
 {
-    public class HR_manager 
+    public class HR_manager : ICRUD
     {
         public static List<Employee> employees = new();
         public static string filePath = "Employees.json";
-
-        
-        public static void HR_managering()
+        public static int objectPos;
+        static Employee objectFromPos;
+        public HR_manager()
         {
-            ConsoleKeyInfo key = Console.ReadKey(true);
-            int indexTable = 0;
-            Program.WelcomePrint();
-
-            //Заголовок таблицы
-            Console.WriteLine(
-                "{0,-7} {1,-10} {2,-15} {3,-40} {4,-20} {5,-15}",
-                    "  ID",
-                    "Фамилия",
-                    "Имя",
-                    "Отчество",
-                    "Должность",
-                    "|" + Visual.getlineMenu(Visual.MenuF, indexTable)
-            );
-            indexTable++;
-
-            foreach (Employee rowemploee in employees)
+            List<Employee> newemployees = General.MyDeserialize<Employee>(filePath);
+            if (newemployees != null && newemployees.Count > 0)
             {
-                Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20} {5,-15}",
-                    "  " + rowemploee.ID.ToString(),
-                    rowemploee.LastName,
-                    rowemploee.FirstName,
-                    rowemploee.MiddleName,
-                    rowemploee.Position,
-                    "|" + Visual.getlineMenu(Visual.MenuF, indexTable)
-                    );
+                employees = newemployees;
             }
-            int pos = Arrows.Show(users.Count);
 
-            while (pos >= 0)
+            PrintList();
+
+            int pos = Arrows.Show(employees.Count);
+            if (pos == (int)Keys.F1)
             {
-                Console.Clear();
-                Program.WelcomePrint();
+                Create();
+            }
+            else if (pos > -1)
+            {
+                Read(pos);
 
-                int indexObject = 0;
-                Employee currentEmployee = employees[pos];
-                var MenuNewEmployee = currentEmployee.ToString();
-                foreach (string item in MenuNewEmployee)
+                ConsoleKeyInfo key = Console.ReadKey(true);
+
+                while (true)
                 {
-                    //Console.WriteLine(item);
-                    Console.WriteLine("{0,-60}{1,-10}", item, "|" + Visual.getlineMenu(Visual.MenuA, indexObject));
-                    indexObject++;
+                    if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.F10 || key.Key == ConsoleKey.Delete)
+                    {
+                        break;
+                    }
+                };
+
+                if (key.Key == ConsoleKey.F10)
+                {
+                    Update();
 
                 }
+                else if (key.Key == ConsoleKey.Delete)
+                {
+                    Delete();
+                }
+                var Employees = new Employee();
+
+            }
+            else if (pos == (int)Keys.F2)
+            {
+                Find();
+                var Employees = new Employee();
+            }
+            else if (pos == (int)Keys.Escape)
+            {
                 return;
-
-                if (key.Key == ConsoleKey.Delete)
-                {
-
-                    var usertodelet = users;
-
-
-
-                }
-
             }
-            if (pos == -11)
+
+        }
+        public void Create()
+        {
+            objectFromPos = new();
+
+            if (Edit() == (int)Keys.S)
             {
-                Employee.Create();
+                employees.Add(objectFromPos);
+                General.MySerialize(employees, filePath);
             }
-            if (Arrows.key.Key == ConsoleKey.F2)
+            var HR = new HR_manager();
+        }
+        public void Read(int pos)
+        {
+            objectPos = pos;
+            objectFromPos = employees[pos];
+            var MenuEmployee = PrintObject(Visual.MenuB);
+        }
+        public void Update()
+        {
+            if (Edit() == (int)Keys.S)
+            {
+                employees[objectPos].FirstName = objectFromPos.FirstName;
+                employees[objectPos].LastName = objectFromPos.LastName;
+                employees[objectPos].MiddleName = objectFromPos.MiddleName;
+                employees[objectPos].DateOfBirth = objectFromPos.DateOfBirth;
+                employees[objectPos].ID = objectFromPos.ID;
+                employees[objectPos].PassportNumber = objectFromPos.PassportNumber;
+                employees[objectPos].Position = objectFromPos.Position;
+                employees[objectPos].Salary = objectFromPos.Salary;
+                employees[objectPos].UserID = objectFromPos.UserID;
+
+                General.MySerialize(employees, filePath);
+            }
+        }
+        public void Delete()
+        {
+            employees.Remove(objectFromPos);
+            General.MySerialize(employees, filePath);
+            var Employees = new Employee();
+        }
+        public void Find()
+        {
+            while (true)
             {
                 Program.WelcomePrint();
                 Console.WriteLine("Выберите, по какому пункту вы хотите произвести поиск:");
 
-                string[] MenuDd =
-                {
-                    "  ID" , "  Имя","  Фамилия", "  Отчество","  Должность", "  Дата рождения","  Серия/номер пасспорта", "  Зарплата", "  ID пользователя"
-                };
+                string[] MenuAd = EmployeeMenu();
 
                 string column = "";
                 string searchtext = "";
-                foreach (string cmd in MenuDd)
+                foreach (string cmd in MenuAd)
                 {
                     Console.WriteLine(cmd);
                 }
-                pos = Arrows.Show(MenuDd.Length);
-                int lineCursor = Arrows.startLine + MenuDd.Length + 2;
+                int pos = Arrows.Show(MenuAd.Length);
+                int lineCursor = Arrows.startLine + MenuAd.Length + 2;
                 Console.SetCursorPosition(0, lineCursor);
                 string errorText = "";
                 if (pos == 0)
@@ -152,240 +174,336 @@ namespace Будущий_10
                     errorText = "Такого ID пользователя не существует";
                 }
                 searchtext = Console.ReadLine();
-                var FindEmployee = General.Search(HR_manager.employees, column, searchtext);
-                if (FindEmployee == null)
+                List<Employee> FindEmployee = General.SearchList(employees, column, searchtext);
+                if (FindEmployee.Count == 0)
                 {
                     Console.WriteLine(errorText);
                     Thread.Sleep(500);
                 }
                 else
                 {
-                  
-                    
+                    Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20} {5,-15}",
+                    "  ID",
+                    "Фамилия",
+                    "Имя",
+                    "Отчество",
+                    "Должность");
+                    foreach (Employee rowemploee in FindEmployee)
+                    {
+                        Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20} {5,-15}",
+                            "  " + rowemploee.ID.ToString(),
+                            rowemploee.LastName,
+                            rowemploee.FirstName,
+                            rowemploee.MiddleName,
+                            rowemploee.Position);
+
+                    }
+                    ConsoleKeyInfo key = Console.ReadKey(true);
                 }
+                break;
             }
-        }
-
-
-
-    }
-    public class Employee
-    {
-        private List<Employee> employees;       
-        public int ID { get; set; }
-        public string LastName { get; set; }
-        public string FirstName { get; set; }
-        public string MiddleName { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public string PassportNumber { get; set; }
-        public string Position { get; set; }
-        public double Salary { get; set; }
-        public int UserID { get; set; }
-
-        public Employee(int id = 999, string lastName = "", string firstName = "", string middleName = "", 
-        DateTime dateOfBirth = new DateTime(), string passportNumber = "", string position = "", double salary = 0.0, int userId = 99)
+        }       
+        public int Edit()
         {
-            ID = id;
-            LastName = lastName;
-            FirstName = firstName;
-            MiddleName = middleName;
-            DateOfBirth = dateOfBirth;
-            PassportNumber = passportNumber;
-            Position = position;
-            Salary = salary;
-            UserID = userId;
-        }
+            var MenuEmployee = PrintObject(Visual.MenuA);
+            var NullMenuEmployee = new Employee().ToString();
 
-        public string[] ToString()
-        {
-            string idline = "  ID: ";
-            if (ID != 999)
-            {
-                idline += ID;
-            }
-            string firstName = $"  Имя: {FirstName}";
-            string lastName = $"  Фамилия: {LastName}";
-            string middleName = $"  Отчество: {MiddleName}";    
-            string dateOfBirth = $"  Дата рождения: {DateOfBirth}";
-            string passportNumber = $"  Серия/номер паспорта: {PassportNumber}";
-            string position = $"  Должность: {Position}";
-            string salaryline = "Зарплата: ";
-            if (Salary != 0.0)
-            {
-                salaryline += Salary;
-            }
-            string userIdline = "ID: ";
-            if (UserID != 99)
-            {
-                userIdline += UserID;
-            }
-
-            string[] result = { idline, lastName, firstName, middleName, dateOfBirth, passportNumber, position , salaryline, userIdline};
-            return result;
-        }
-
-        //public Employee(string filePath)
-        //{
-        //    dataFilePath = filePath;
-        //    LoadData();
-        //}
-
-        public static void Create()
-        {
-            ConsoleKeyInfo key = Console.ReadKey(true);
-            Program.WelcomePrint();
-
-            //Печать меню объекта и меню операций над ним
-            int indexObject = 0;
-            Employee NEWEmployee = new();
-            var MenuNewEmployee = NEWEmployee.ToString();
-            Console.WriteLine("");
-            foreach (string item in MenuNewEmployee)
-            {
-                Console.WriteLine("{0,-60}{1,-10}", item, "|" + Visual.getlineMenu(Visual.MenuA, indexObject));
-                indexObject++;
-            }
-
-            int pos = Arrows.Show(MenuNewEmployee.Length);
+            int pos = Arrows.Show(MenuEmployee.Length);
             int lineCursor = pos + Arrows.startLine;
-            while (pos != -15 || pos != Arrows.startLine - 1)
+
+            while (true)
             {
-                if (pos == 0)
+
+                if (pos == (int)Keys.Escape || pos == (int)Keys.S)
                 {
-                    Console.SetCursorPosition(MenuNewEmployee[pos].Length, lineCursor);
-                    string inputFirstName = Console.ReadLine();
+                    return pos;
+                }
+                else if (pos == 0)
+                {
+
+                    ClearEditString(NullMenuEmployee, pos, lineCursor);
+
+                    string inputID = Console.ReadLine();
                     try
                     {
-                        NEWEmployee.FirstName = inputFirstName;
+                        objectFromPos.ID = int.Parse(inputID);
                     }
                     catch
                     {
-                        Console.SetCursorPosition(2, lineCursor);
-                        Console.WriteLine(MenuNewEmployee[pos] + new StringBuilder().Insert(0, " ", inputFirstName.Length).ToString());
-
                         Console.SetCursorPosition(10, 10);
-                        Console.WriteLine("Для Имени необходимо вводить только буквы!");
+                        Console.WriteLine("Для ID необходимо вводить только цифры!");
+
+                        Console.SetCursorPosition(0, lineCursor + pos);
+                        Console.WriteLine(NullMenuEmployee[pos] + new StringBuilder().Insert(0, " ", inputID.Length).ToString());
                     }
                 }
                 else if (pos == 1)
                 {
-                    Console.SetCursorPosition(MenuNewEmployee[pos].Length, lineCursor);
-                    string inputLastName = Console.ReadLine();
-                    NEWEmployee.LastName = inputLastName;
-                    int i = 11;
-                    key = Console.ReadKey(true);
-                    while (key.Key != ConsoleKey.Enter)
+                    ClearEditString(NullMenuEmployee, pos, lineCursor);
+
+                    string inputFirstName = Console.ReadLine();
+                    try
                     {
-                        if (key.Key == ConsoleKey.Backspace)
-                        {
-                            if (i > 11)
-                            {
-                                Console.Write("\b ");
-                                i--;
-                                Console.SetCursorPosition(i, 3);
-                            }
-                        }
-                        key = Console.ReadKey(true);
+                        objectFromPos.FirstName = inputFirstName;
+                    }
+                    catch
+                    {
+                        Console.SetCursorPosition(10, 10);
+                        Console.WriteLine("Для Имени необходимо вводить только буквы!");
+
+                        Console.SetCursorPosition(0, lineCursor + pos);
+                        Console.WriteLine(NullMenuEmployee[pos] + new StringBuilder().Insert(0, " ", inputFirstName.Length).ToString());
+
+
                     }
                 }
-
                 else if (pos == 2)
                 {
-                    Console.SetCursorPosition(MenuNewEmployee[pos].Length, lineCursor);
-                    string inputMiddleName = Console.ReadLine();
-                    NEWEmployee.MiddleName = inputMiddleName;
+                    ClearEditString(NullMenuEmployee, pos, lineCursor);
+
+                    string inputLastName = Console.ReadLine();
+                    try
+                    {
+                        objectFromPos.LastName = inputLastName;
+                    }
+                    catch
+                    {
+                        Console.SetCursorPosition(10, 10);
+                        Console.WriteLine("Для фамилии необходимо вводить только буквы!");
+
+                        Console.SetCursorPosition(0, lineCursor + pos);
+                        Console.WriteLine(NullMenuEmployee[pos] + new StringBuilder().Insert(0, " ", inputLastName.Length).ToString());
+
+
+                    }
 
                 }
                 else if (pos == 3)
                 {
-                    Console.SetCursorPosition(MenuNewEmployee[pos].Length, lineCursor);
+                    ClearEditString(NullMenuEmployee, pos, lineCursor);
+
+                    string inputMiddleName = Console.ReadLine();
+                    try
+                    {
+                        objectFromPos.MiddleName = inputMiddleName;
+                    }
+                    catch
+                    {
+                        Console.SetCursorPosition(10, 10);
+                        Console.WriteLine("Для отчества необходимо вводить только буквы!");
+
+                        Console.SetCursorPosition(0, lineCursor + pos);
+                        Console.WriteLine(NullMenuEmployee[pos] + new StringBuilder().Insert(0, " ", inputMiddleName.Length).ToString());
+
+
+                    }
+
+                }
+                else if (pos == 4)
+                {
+                    ClearEditString(NullMenuEmployee, pos, lineCursor);
                     string inputDateOfBirth = Console.ReadLine();
                     try
                     {
 
-                        NEWEmployee.DateOfBirth = Convert.ToDateTime(inputDateOfBirth);
+                        objectFromPos.DateOfBirth = Convert.ToDateTime(inputDateOfBirth);
                     }
                     catch
                     {
-                        Console.SetCursorPosition(2, lineCursor);
-                        Console.WriteLine(MenuNewEmployee[pos] + new StringBuilder().Insert(0, " ", inputDateOfBirth.ToString().Length).ToString());
-
                         Console.SetCursorPosition(10, 10);
                         Console.WriteLine("Для даты рождения необходимо вводить только цифры!");
+
+                        Console.SetCursorPosition(2, lineCursor);
+                        Console.WriteLine(NullMenuEmployee[pos] + new StringBuilder().Insert(0, " ", inputDateOfBirth.ToString().Length).ToString());
+
+
                     }
-                    Console.SetCursorPosition(MenuNewEmployee[pos].Length, lineCursor);
-                    //string inputRole = Console.ReadLine();
-                    //NEWUser.Role = int.Parse(inputRole);
-                    //NEWUser.Role = (inputRole)Enum.Parse(typeof(Roles));
 
                 }
+                else if (pos == 5)
+                {
+                    ClearEditString(NullMenuEmployee, pos, lineCursor);
 
-                pos = Arrows.Show(2);
+                    string inputPassportNumber = Console.ReadLine();
+                    try
+                    {
+                        objectFromPos.PassportNumber = inputPassportNumber;
+                    }
+                    catch
+                    {
+                        Console.SetCursorPosition(10, 10);
+                        Console.WriteLine("Для Сериии/номера пасспорта необходимо вводить только цифры!");
+
+                        Console.SetCursorPosition(0, lineCursor + pos);
+                        Console.WriteLine(NullMenuEmployee[pos] + new StringBuilder().Insert(0, " ", inputPassportNumber.Length).ToString());
+                    }
+                }
+                else if (pos == 6)
+                {
+                    ClearEditString(NullMenuEmployee, pos, lineCursor);
+                    objectFromPos.Position = Console.ReadLine();
+                }
+                else if (pos == 7)
+                {
+                    ClearEditString(NullMenuEmployee, pos, lineCursor);
+                    string inputSalary = Console.ReadLine();
+                    try
+                    {
+                        objectFromPos.Salary = double.Parse(inputSalary);
+                    }
+                    catch
+                    {
+                        Console.SetCursorPosition(10, 10);
+                        Console.WriteLine("Для зарплаты необходимо вводить только цифры!");
+
+                        Console.SetCursorPosition(0, lineCursor + pos);
+                        Console.WriteLine(NullMenuEmployee[pos] + new StringBuilder().Insert(0, " ", inputSalary.Length).ToString());
+
+                    }
+
+                }
+                else if (pos == 8)
+                {
+
+                    ClearEditString(NullMenuEmployee, pos, lineCursor);
+
+                    string inputUserID = Console.ReadLine();
+                    try
+                    {
+                        objectFromPos.UserID = int.Parse(inputUserID);
+                    }
+                    catch
+                    {
+                        Console.SetCursorPosition(10, 10);
+                        Console.WriteLine("Для ID необходимо вводить только цифры!");
+
+                        Console.SetCursorPosition(0, lineCursor + pos);
+                        Console.WriteLine(NullMenuEmployee[pos] + new StringBuilder().Insert(0, " ", inputUserID.Length).ToString());
+                    }
+                }
+
+                pos = Arrows.Show(MenuEmployee.Length);
             }
-        }
 
-        public Employee Read(int id)
+        }      
+        public void ClearEditString(string[] NullMenuEmployee, int pos, int lineCursor)
         {
-            return employees.Find(e => e.ID == id);
+            Console.SetCursorPosition(NullMenuEmployee[pos].Length, lineCursor + pos);
+            Console.WriteLine(" ", 20);
+            Console.SetCursorPosition(NullMenuEmployee[pos].Length, lineCursor + pos);
         }
-
-        public void Update(Employee updatedEmployee)
+        public void PrintList()
         {
-            Employee employee = Read(updatedEmployee.ID);
-            if (employee != null)
+            int indexTable = 0;
+
+            Program.WelcomePrint();
+
+            //Заголовок таблицы
+            Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20} {5,-15}",
+            "  ID",
+            "Фамилия",
+            "Имя",
+            "Отчество",
+            "Должность",
+            "|" + Visual.getlineMenu(Visual.MenuF, indexTable));
+            indexTable++;
+
+            //Строчки таблицы
+
+            foreach (Employee rowemploee in employees)
             {
-                employee.LastName = updatedEmployee.LastName;
-                employee.Position = updatedEmployee.Position;
-                // Другие поля...
-                
+                Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20} {5,-15}",
+                    "  " + rowemploee.ID.ToString(),
+                    rowemploee.LastName,
+                    rowemploee.FirstName,
+                    rowemploee.MiddleName,
+                    rowemploee.Position,
+                    "|" + Visual.getlineMenu(Visual.MenuF, indexTable));
+                indexTable++;
             }
         }
-
-        public void Delete(int id)
+        public string[] PrintObject(string[] VisualMenu)
         {
-            Employee employee = Read(id);
-            if (employee != null)
+            var MenuEmployee = objectFromPos.ToString();
+
+            Program.WelcomePrint();
+            Console.WriteLine("");
+            for (int i = 0; i < MenuEmployee.Length; i++)
             {
-                employees.Remove(employee);
-                
+                Console.WriteLine("{0,-60}{1,-10}", MenuEmployee[i], "|" + Visual.getlineMenu(VisualMenu, i));
             }
+
+            for (int i = MenuEmployee.Length; i <= VisualMenu.Length; i++)
+            {
+                Console.WriteLine("{0,-60}{1,-10}", "", "|" + Visual.getlineMenu(VisualMenu, i));
+            }
+
+            return MenuEmployee;
         }
 
-        public List<Employee> GetAll()
+        public static string[] EmployeeMenu()
         {
-            return employees;
-        }
+            string[] MenuEmployee = { "  ID" , "  Имя","  Фамилия", "  Отчество","  Должность",
+            "  Дата рождения","  Серия/номер пасспорта", "  Зарплата", "  ID пользователя"};
 
-        private int GetNextId()
+            return MenuEmployee;
+        }
+        public class Employee
         {
-            if (employees.Count > 0)
+            public int ID { get; set; }
+            public string LastName { get; set; }
+            public string FirstName { get; set; }
+            public string MiddleName { get; set; }
+            public DateTime DateOfBirth { get; set; }
+            public string PassportNumber { get; set; }
+            public string Position { get; set; }
+            public double Salary { get; set; }
+            public int UserID { get; set; }
+
+            public Employee(int id = 999, string lastName = "", string firstName = "", string middleName = "",
+            DateTime dateOfBirth = new DateTime(), string passportNumber = "", string position = "", double salary = 0.0, int userId = 99)
             {
-                return employees[employees.Count - 1].ID + 1;
+                ID = id;
+                LastName = lastName;
+                FirstName = firstName;
+                MiddleName = middleName;
+                DateOfBirth = dateOfBirth;
+                PassportNumber = passportNumber;
+                Position = position;
+                Salary = salary;
+                UserID = userId;
             }
-            else
+         
+            public string[] ToString()
             {
-                return 1;
+                var strEmployeeMenu = EmployeeMenu();
+
+                string idline = "";
+                if (ID != 999)
+                {
+                    idline += ID;
+                }               
+                string salaryline = "";
+                if (Salary != 0.0)
+                {
+                    salaryline += Salary;
+                }
+                string userIdline = "";
+                if (UserID != 99)
+                {
+                    userIdline += UserID;
+                }
+                strEmployeeMenu[0] = $"{strEmployeeMenu[0]}: {idline}";
+                strEmployeeMenu[1] = $"{strEmployeeMenu[1]}: {FirstName}";
+                strEmployeeMenu[2] = $"{strEmployeeMenu[2]}: {LastName}";
+                strEmployeeMenu[3] = $"{strEmployeeMenu[3]}: {MiddleName}";
+                strEmployeeMenu[4] = $"{strEmployeeMenu[4]}: {DateOfBirth}";
+                strEmployeeMenu[5] = $"{strEmployeeMenu[5]}: {PassportNumber}";
+                strEmployeeMenu[6] = $"{strEmployeeMenu[6]}: {Position}";
+                strEmployeeMenu[7] = $"{strEmployeeMenu[7]}: {salaryline}";
+                strEmployeeMenu[8] = $"{strEmployeeMenu[8]}: {userIdline}";
+                return strEmployeeMenu;
             }
         }
-
-
-        //private void LoadData()
-        //{
-        //    if (File.Exists(dataFilePath))
-        //    {
-        //        string jsonData = File.ReadAllText(dataFilePath);
-        //        employees = JsonConvert.DeserializeObject<List<Employee>>(jsonData);
-        //    }
-        //    else
-        //    {
-        //        employees = new List<Employee>();
-        //    }
-        //}
-
-        //private void SaveData()
-        //{
-        //    string jsonData = JsonConvert.SerializeObject(employees);
-        //    File.WriteAllText(dataFilePath, jsonData);
-        //}
     }
 }

@@ -3,24 +3,113 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Будущий_10.Accountant;
+using static Будущий_10.WarehouseManager;
 
 namespace Будущий_10
 {
-    public class Cashier 
-    {
 
-    }
-    public class LogicCashier
+    public class Cashier
     {
-        private List<Product> products;
-        private List<Product> cart;
+        private static List<Product> products = WarehouseManager.products;
+        private static List<Product> carts = new();
+        private static List<Transaction> transactions = Accountant.transactions;
+        private static string filePathW = WarehouseManager.filePath;
+        private static string filePathA = Accountant.filePath;
+        private static int objectPos;
+        private static Product objectFromPos;
+        private static double summCarts;
 
-        public LogicCashier(List<Product> products)
+        public Cashier()
         {
-            this.products = products;
-            cart = new List<Product>();
+            
+            foreach (var item in products)
+            {
+                item.Quantity = 0;
+                carts.Add(item);
+            }
+            PrintList();
+
+            int pos = Arrows.Show(carts.Count);
+
+            if (pos > -1)
+            {
+                Update(pos); 
+                Read(pos);
+
+                ConsoleKeyInfo key = Console.ReadKey(true);
+
+                while (true)
+                {
+                    if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.F10 || key.Key == ConsoleKey.Delete)
+                    {
+                        break;
+                    }
+                };
+
+                if (key.Key == ConsoleKey.F10)
+                {
+                    Update();
+
+                }
+                else if (key.Key == ConsoleKey.Delete)
+                {
+                    Delete();
+                }
+                var Admin = new Administrator();
+
+            }
+            else if (pos == (int)Keys.Escape)
+            {
+                return;
+            }
+            else if (pos == (int)Keys.S)
+            {
+                SaveCart();
+            }
+
+
         }
 
+        private void Update(int pos)
+        {
+            objectPos = pos;
+            objectFromPos = users[pos];
+            var MenuUser = PrintObject(Visual.MenuB);
+
+
+        }
+        public void PrintList()
+        {
+            int indexTable = 0;
+            summCarts = 0;
+
+            Program.WelcomePrint();
+
+            //Заголовок таблицы
+            Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20}",
+                    "  ID",
+                    "Название",
+                    "Цена",
+                    "Количество",
+                    "|" + Visual.getlineMenu(Visual.MenuC, indexTable));
+            indexTable++;
+
+            foreach (Product rowproduct in carts)
+            {
+                Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20}",
+                    "  " + rowproduct.ID.ToString(),
+                    rowproduct.Name,
+                    rowproduct.Price,
+                    rowproduct.Quantity,
+                    "|" + Visual.getlineMenu(Visual.MenuC, indexTable));
+                indexTable++;
+                summCarts += rowproduct.Price * rowproduct.Quantity;
+            }
+            Console.WriteLine(new string('-', 92));
+            Console.WriteLine("{0,92}", $"Итог: {summCarts}");
+
+        }
         public void ShowAllProducts()
         {
             Console.WriteLine("Список товаров:");
@@ -52,7 +141,7 @@ namespace Будущий_10
                 }
                 else
                 {
-                    cart.Add(new Product( product.ID , product.Name, product.Price, quantity));
+                    cart.Add(new Product(product.ID, product.Name, product.Price, quantity));
                     Console.WriteLine("Товар успешно добавлен в корзину.");
                     product.Quantity -= quantity;
                 }
@@ -91,3 +180,5 @@ namespace Будущий_10
         }
     }
 }
+
+
