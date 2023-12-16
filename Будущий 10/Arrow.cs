@@ -53,6 +53,11 @@
                     return (int)Keys.F10;
                 else if (key.Key == ConsoleKey.S)
                     return (int)Keys.S;
+                else if (key.Key == ConsoleKey.OemPlus)
+                    return (int)Keys.plus;
+                else if (key.Key == ConsoleKey.OemMinus)
+                    return (int)Keys.minus;
+
             }
             return position - minPosition;
         }

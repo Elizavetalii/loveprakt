@@ -64,7 +64,7 @@ namespace Будущий_10
         {
             int indexTable = 0;
             Program.WelcomePrint();
-            Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20} {5,-10}",
+            Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-25} {4,-20} {5,-10}",
                 "  ID",
                 "Название",
                 "Сумма",
@@ -75,7 +75,7 @@ namespace Будущий_10
 
             foreach (Transaction transaction in transactions)
             {
-                Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20} {5,-10}",
+                Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-25} {4,-20} {5,-10}",
                     "  " + transaction.ID.ToString(),
                     transaction.Name,
                     transaction.Amount,
@@ -83,6 +83,15 @@ namespace Будущий_10
                     transaction.IsIncome,
                     "|" + Visual.getlineMenu(Visual.MenuF, indexTable));
                 indexTable++;
+            }
+            for (int i = indexTable; i <= Visual.MenuF.Length; i++)
+            {
+                Console.WriteLine("{0,-7} {1,-10} {2,-15} {3,-40} {4,-20}",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "|" + Visual.getlineMenu(Visual.MenuF, i));
             }
         }
         public void Update()

@@ -1,14 +1,13 @@
 ﻿using Будущий_10;
 
-
 class Program
 {
     public static Administrator.User LoginUser = new();
     public static void Main()
     {
-        //Console.SetCursorPosition(45, 10);
-        //Console.WriteLine("ДОБРО ПОЖАЛОВАТЬ В МАГАЗИН 'ЯРУССКИЙ'");
-        ////Thread.Sleep(2000);
+        Console.SetCursorPosition(41, 10);
+        Console.WriteLine("ДОБРО ПОЖАЛОВАТЬ В МАГАЗИН 'ЯРУССКИЙ'");
+        Thread.Sleep(2000);
         while (true)
         {
             string[] mainMenu = { "  Введите логин: ", "  Введите пароль: ", "  Авторизоваться" };
@@ -116,7 +115,7 @@ class Program
                 }
                 else if(LoginUser.Role == Roles.Cashier)
                 {
-                    var Cashier = new Cashier();
+                   // var Cashier = new Cashier();
                 }
                 LoginUser = new();
                 break;
