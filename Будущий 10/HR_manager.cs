@@ -96,68 +96,80 @@ namespace Будущий_10
                 pos = Arrows.Show(MenuDd.Length);
                 int lineCursor = Arrows.startLine + MenuDd.Length + 2;
                 Console.SetCursorPosition(0, lineCursor);
+                string errorText = "";
                 if (pos == 0)
                 {
                     column = "ID";
                     Console.WriteLine("Введите ID: ");
-
+                    errorText = "Такого ID не существует";
                 }
                 else if (pos == 1)
                 {
                     column = "LastName";
                     Console.WriteLine("Введите Фамилию: ");
-
+                    errorText = "Такоой Фамилии не существует";
                 }
                 else if (pos == 2)
                 {
                     column = "FirstName";
                     Console.WriteLine("Введите Имя: ");
-
+                    errorText = "Такого Имени не существует";
                 }
                 else if (pos == 3)
                 {
                     column = "MiddleName";
                     Console.WriteLine("Введите Отчество: ");
-
+                    errorText = "Такого Отчества не существует";
                 }
                 else if (pos == 4)
                 {
                     column = "Role";
                     Console.WriteLine("Введите Должность: ");
-
+                    errorText = "Такой Должности не существует";
                 }
                 else if (pos == 5)
                 {
                     column = "DateOfBirth";
                     Console.WriteLine("Введите Дату рождения: ");
-
+                    errorText = "Такой Даты не существует";
                 }
                 else if (pos == 6)
                 {
                     column = "PassportNumber";
                     Console.WriteLine("Введите Серию/номер пасспорта: ");
-
+                    errorText = "Такой Серии/номера пасспорта не существует";
                 }
                 else if (pos == 7)
                 {
                     column = "Salary";
                     Console.WriteLine("Введите Зарплату: ");
-
+                    errorText = "Такой Зарплаты не существует";
                 }
                 else if (pos == 8)
                 {
                     column = "UserID";
                     Console.WriteLine("Введите ID пользователя: ");
+                    errorText = "Такого ID пользователя не существует";
                 }
-
                 searchtext = Console.ReadLine();
+                var FindEmployee = General.Search(HR_manager.employees, column, searchtext);
+                if (FindEmployee == null)
+                {
+                    Console.WriteLine(errorText);
+                    Thread.Sleep(500);
+                }
+                else
+                {
+                  
+                    
+                }
             }
         }
 
 
 
     }
-    public class Employee : IDataRepository<Employee>
+    public class Employee
     {
         private List<Employee> employees;       
         public int ID { get; set; }
@@ -355,10 +367,7 @@ namespace Будущий_10
                 return 1;
             }
         }
-        void IDataRepository<Employee>.Create(Employee item)
-        {
-            throw new NotImplementedException();
-        }
+
 
         //private void LoadData()
         //{

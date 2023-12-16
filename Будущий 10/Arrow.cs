@@ -45,27 +45,15 @@ namespace Будущий_10
                 else if (key.Key == ConsoleKey.Enter)
                     break;
                 else if (key.Key == ConsoleKey.Escape)
-                {
-                    position = minPosition - 1;
-                    break;
-                }
-
+                    return (int)Keys.Escape;
                 if (key.Key == ConsoleKey.F1)
-                {
-                    return -11;
-                }
+                    return (int)Keys.F1;
                 else if (key.Key == ConsoleKey.F2)
-                {
-                    return -12;
-                }
-                else if (key.Key == ConsoleKey.F3)
-                {
-                    return -13;
-                }
+                    return (int)Keys.F2;
+                else if (key.Key == ConsoleKey.F10)
+                    return (int)Keys.F10;
                 else if (key.Key == ConsoleKey.S)
-                {
-                    return -15;
-                }
+                    return (int)Keys.S;
 
             }
             return position - minPosition;

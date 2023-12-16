@@ -16,6 +16,9 @@ namespace Будущий_10
 
         public static void WarehouseManagering()
         {
+
+            products = General.MyDeserialize<Product>("products.json") ?? new List<Product>();
+
             ConsoleKeyInfo key = Console.ReadKey(true);
             int indexTable = 0;
             Program.WelcomePrint();
@@ -127,7 +130,7 @@ namespace Будущий_10
 
 
 
-    public class Product : IDataRepository<Product>
+    public class Product
     {
         public List<Product> products;
         public int ID { get; set; }
@@ -173,7 +176,7 @@ namespace Будущий_10
 
         public void Deserialize()
         {
-            products = General.MyDeserialize<List<Product>>("products.json") ?? new List<Product>();
+            
         }
 
         public void ShowAllProducts()
@@ -274,10 +277,7 @@ namespace Будущий_10
             Console.SetCursorPosition(MenuNewProduct[pos].Length, lineCursor);
 
         }
-        void IDataRepository<Product>.Create(Product item)
-        {
-            throw new NotImplementedException();
-        }
+
 
         public void Update()
         {
@@ -309,15 +309,7 @@ namespace Будущий_10
             }
             Console.WriteLine();
         }
-        void IDataRepository<Product>.Update(Product item)
-        {
-            throw new NotImplementedException();
-        }
 
-        void IDataRepository<Product>.Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
 
         public void Delete()
         {

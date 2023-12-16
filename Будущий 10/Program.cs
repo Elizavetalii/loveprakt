@@ -5,8 +5,8 @@ using Будущий_10;
 
 class Program
 {
-    static public Administrator.User LoginUser = new();
-    public static void Main(string[] args)
+    public static Administrator.User LoginUser = new();
+    public static void Main()
     {
         //Console.SetCursorPosition(45, 10);
         //Console.WriteLine("ДОБРО ПОЖАЛОВАТЬ В МАГАЗИН 'ЯРУССКИЙ'");
@@ -102,24 +102,26 @@ class Program
 
                 if (LoginUser.Role == Roles.Administrator)
                 {
-                    Administrator.Administratoring();                               
+                    var Admin = new Administrator();
                 }
-                if (LoginUser.Role == Roles.HR_manager)
+                else if (LoginUser.Role == Roles.HR_manager)
                 {
                     HR_manager.HR_managering();
                 }
-                if (LoginUser.Role == Roles.Accountant)
+                else if(LoginUser.Role == Roles.Accountant)
                 {
 
                 }
-                if (LoginUser.Role == Roles.WarehouseManager)
+                else if(LoginUser.Role == Roles.WarehouseManager)
                 {
 
                 }
-                if (LoginUser.Role == Roles.Cashier)
+                else if(LoginUser.Role == Roles.Cashier)
                 {
-
+                     
                 }
+                LoginUser = new();
+                break;
             }
         }
     }
